@@ -12,7 +12,7 @@ mkdir -p ./extensions
 
 # Step 2: Generate the PostgreSQL Database Initialization script
 echo "Generating initdb.sql..."
-docker run --rm guacamole/guacamole /opt/guacamole/bin/initdb.sh --postgres > ./data/initdb.sql
+docker run --rm guacamole/guacamole /opt/guacamole/bin/initdb.sh --postgresql > ./data/initdb.sql
 
 # Step 3: Download the OpenID (Google Auth) Extension
 echo "Downloading Google Auth SSO extension..."
