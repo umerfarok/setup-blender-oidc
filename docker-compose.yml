@@ -16,7 +16,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: guacamole_db
     volumes:
-      - ./data/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
+      - ./data/initdb.sql:/docker-entrypoint-initdb.d/01-initdb.sql
+      - ./data/02-create-test-user.sql:/docker-entrypoint-initdb.d/02-create-test-user.sql
       - postgres_data:/var/lib/postgresql/data
 
   guacamole:
