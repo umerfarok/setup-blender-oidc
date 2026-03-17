@@ -41,6 +41,9 @@ services:
       OPENID_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       OPENID_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
       OPENID_USERNAME_CLAIM_TYPE: email
+      EXTENSION_PRIORITY: openid, postgresql
+    volumes:
+      - ./extensions:/opt/guacamole/extensions
     depends_on:
       - postgres
       - guacd
