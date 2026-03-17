@@ -1,0 +1,14 @@
+# Environments
+.env
+
+# Guacamole Data Local Mounts
+postgres_data/
+
+# Log Files
+*.log
+*.txt
+!clientreuqiremtsn.txt
+
+# OS Specific
+.DS_Store
+Thumbs.db
