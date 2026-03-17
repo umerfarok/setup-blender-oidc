@@ -1,0 +1,59 @@
+Technical Task: VPS Setup for AI APIs and Blender Environment
+1. VPS Infrastructure
+Provision and configure a VPS server with the following minimum specifications:
+• RAM: at least 16 GB
+• CPU: sufficient performance to support workloads requiring at least 16 GB RAM
+• Storage: minimum 100 GB SSD
+• GPU: NVIDIA GPU with 4–8 GB VRAM
+• Stable high‑speed internet connection
+• Recommended OS: Linux (Ubuntu 22.04 LTS or similar)
+
+The server must be configured for stable 24/7 operation.
+2. API Configuration
+Configure access to the following APIs:
+• OpenAI API
+• Anthropic API
+
+Requirements:
+• Secure storage of API keys (environment variables or equivalent solution)
+• Ability to access the APIs from server‑side applications
+• Test scripts to confirm successful API connectivity
+• Preferably enable basic logging of API requests
+3. Blender Environment
+Install and configure:
+• Blender version 4.5
+
+Requirements:
+• Enable GPU acceleration
+• Install required drivers (CUDA / NVIDIA drivers)
+• Test rendering to ensure the system works correctly
+4. Remote Access for Team
+Set up secure remote access to the server for employees.
+
+Requirements:
+• Support up to 10 users (currently 5 active)
+• Authentication via Google accounts (Gmail / Google Workspace)
+• Separate user account for each user
+• Ability for users to work simultaneously in parallel
+• Each user must have an independent workspace or session
+
+The system must allow multiple users to work in Blender simultaneously without interfering with each other.
+5. Security
+Configure basic server security:
+• Firewall
+• User access management
+• Restricted permissions
+• Regular system updates
+• Secure authentication
+6. Backup and Stability
+Implement:
+• Automatic backup of project files
+• Monitoring of CPU and GPU usage
+• Service recovery procedures in case of failure
+7. Documentation
+Provide a short instruction guide including:
+• How users connect to the server
+• Login and authentication procedure
+• How to launch and use Blender
+• Where and how APIs are configured
+• Basic troubleshooting steps
