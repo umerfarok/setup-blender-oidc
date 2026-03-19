@@ -39,7 +39,6 @@ services:
       OPENID_JWKS_ENDPOINT: https://www.googleapis.com/oauth2/v3/certs
       OPENID_ISSUER: https://accounts.google.com
       OPENID_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-      OPENID_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
       OPENID_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
       OPENID_USERNAME_CLAIM_TYPE: email
       EXTENSION_PRIORITY: openid, postgresql
