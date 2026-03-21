@@ -1,72 +1,66 @@
 # setup-blender-oidc
 
-This repository contains the Docker Compose stack and configuration required to deploy Apache Guacamole with Google Web SSO (OpenID Connect). This acts as a centralized gateway to map users securely into isolated Linux XRDP environments for Blender.
+This repository contains the Apache Guacamole configuration used to front a
+multi-user Blender workstation with Google OpenID login.
 
-## Prerequisites for VPS
-- Ubuntu 22.04 LTS (Recommended)
-- Docker & Docker Compose installed
-- Nginx and Certbot (for free SSL)
-- A domain name pointing to your VPS IP address.
+The intended production shape is:
 
-## VPS Deployment Guide
+- Ubuntu 22.04 GPU VM
+- XFCE + XRDP on the host
+- Blender installed on the host
+- Guacamole + PostgreSQL + guacd from this repo
+- Nginx in front of Guacamole
+- Google Workspace / Google login via OpenID
 
-### 1. Initial Setup
-Log into your VPS via SSH and install Docker if you haven't already:
-```bash
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
-sudo usermod -aG docker $USER
-```
-*(Logout and log back in for the docker group to take effect).*
+## Important Note About RunPod
 
-### 2. Clone the Repository
-Clone this repository to your VPS:
-```bash
-git clone https://github.com/umerfarok/setup-blender-oidc.git ~/guacamole
-cd ~/guacamole
-```
+This repo can be used on a normal Ubuntu VM with Docker Compose.
 
-### 3. Configure the Environment
-Configure your database passwords and Google API Keys:
-```bash
-cp .env.example .env
-nano .env
-```
-*Make sure to change `GOOGLE_REDIRECT_URI` in the `.env` file to your actual LIVE domain (e.g., `https://workspace.yourdomain.com/guacamole/`)*
+It is not a good fit for nested Docker inside a restricted RunPod pod. On
+RunPod we had to pivot to a native host install because Docker-in-Docker and
+normal `80/443` ingress were not reliable there.
 
-### 4. Admin and User Setup
-If you need to define your Admin email or pre-create client emails before booting:
-```bash
-nano data/02-create-test-user.sql
-```
-*Change `umerfarooq.dev@gmail.com` to your actual admin email.*
+If you are rebuilding on a normal VM instead of RunPod, follow the VM guide:
 
-### 5. Start the Environment
-Boot the system up to ingest the configurations.
-```bash
-sudo docker-compose up -d
-```
+[VM Deployment Guide](C:\Users\Umer Farooq\Desktop\Workspace\alex-blender\VM-DEPLOYMENT.md)
 
-### 6. Reverse Proxy & SSL (Nginx)
-To provide secure HTTPS access, setup Nginx:
-```bash
-sudo apt update
-sudo apt install nginx certbot python3-certbot-nginx -y
+## Quick Start For A Normal VM
 
-# Request an SSL certificate for your domain
-sudo certbot --nginx -d workspace.yourdomain.com
-```
+1. Provision an Ubuntu 22.04 GPU VM with public `80/443` access.
+2. Install NVIDIA drivers, XFCE, XRDP, Docker, Nginx, and Certbot.
+3. Install Blender on the host.
+4. Clone this repo and configure [`.env.example`](C:\Users\Umer Farooq\Desktop\Workspace\alex-blender\.env.example).
+5. Start the Guacamole stack with Docker Compose.
+6. Put Nginx in front of Guacamole and issue the TLS certificate.
+7. Verify Google login, then verify each XRDP desktop connection.
 
-Once Nginx is ready, copy the provided configuration:
-```bash
-sudo cp nginx-guacamole.conf /etc/nginx/sites-available/guacamole
-sudo ln -s /etc/nginx/sites-available/guacamole /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl restart nginx
+## Repository Files
+
+- [`docker-compose.yml`](C:\Users\Umer Farooq\Desktop\Workspace\alex-blender\docker-compose.yml): Guacamole, PostgreSQL, and guacd services
+- [`data/02-create-test-user.sql`](C:\Users\Umer Farooq\Desktop\Workspace\alex-blender\data\02-create-test-user.sql): pre-created Guacamole OpenID users
+- [`nginx-guacamole.conf`](C:\Users\Umer Farooq\Desktop\Workspace\alex-blender\nginx-guacamole.conf): Nginx reverse proxy config
+- [`init.sh`](C:\Users\Umer Farooq\Desktop\Workspace\alex-blender\init.sh): Guacamole database bootstrap helper
+
+## Environment Variables
+
+Copy [`.env.example`](C:\Users\Umer Farooq\Desktop\Workspace\alex-blender\.env.example)
+to `.env` and set at minimum:
+
+- `POSTGRES_PASSWORD`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_REDIRECT_URI`
+
+For production, the redirect URI must exactly match the final URL used by
+users, for example:
+
+```env
+GOOGLE_REDIRECT_URI=https://workspace.yourdomain.com/guacamole/
 ```
 
-### 7. Final Configuration
-1. Go to `https://workspace.yourdomain.com/guacamole/`
-2. Sign in with the Google Account you defined as an admin in Step 4.
-3. Click your username in the top right -> **Settings** -> **Connections**.
-4. Create XRDP connections pointing to `127.0.0.1` and assign them to your generated OpenID users.
+## Notes
+
+- Blender itself runs on the host, not inside the Guacamole containers.
+- The Linux users and their XRDP sessions are separate from Guacamole users.
+- Guacamole users must still be assigned connections after first boot.
+- On a real VM, the simplest stable path is host XRDP + host Blender + Docker
+  Compose for Guacamole.
